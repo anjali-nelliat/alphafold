@@ -47,7 +47,8 @@ _UNIPROT_PATTERN = re.compile(
 
 # added a pattern to parse OX ID 
 _OX_ID_PATTERN = re.compile(r"""\sOX=(?P<OX_ID>[0-9]{1,20})\s""")
-
+# added a pattern to parse host ox id
+_HOST_OX_ID_PATTERN = re.compile(r"""HOST_ID=(?P<OX_ID>[0-9]{1,20})""")
 @dataclasses.dataclass(frozen=True)
 class Identifiers:
   species_id: str = ''
@@ -67,11 +68,13 @@ def _parse_sequence_identifier(msa_sequence_identifier: str) -> Identifiers:
     An `Identifiers` instance with species_id. These
     can be empty in the case where no identifier was found.
   """
-  matches = re.search(_OX_ID_PATTERN, msa_sequence_identifier.strip())
+  print(f"msa_sequence_identifier is {msa_sequence_identifier}")
+  matches = re.search(_HOST_OX_ID_PATTERN, msa_sequence_identifier.strip())
   if matches:
+    print(f"matches.group('OX_ID').rstrip() is {matches.group('OX_ID').rstrip()} ")
     return Identifiers(
-        # species_id=matches.group('SpeciesIdentifier'))
-        species_id=matches.group('OX_ID')).rstrip()
+        species_id=matches.group('OX_ID').rstrip())
+  
   return Identifiers()
 
 
